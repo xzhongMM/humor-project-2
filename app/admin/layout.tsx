@@ -15,8 +15,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <nav>
           <NavLink href="/admin" exact>Overview</NavLink>
           <NavLink href="/admin/users">Users</NavLink>
-          <NavLink href="/admin/memes">AI media</NavLink>
-          <NavLink href="/admin/captions">Captions</NavLink>
+          <NavLink href="/admin/memes">Memes</NavLink>
           <NavLink href="/admin/votes">Votes</NavLink>
         </nav>
         <div className="whoami">

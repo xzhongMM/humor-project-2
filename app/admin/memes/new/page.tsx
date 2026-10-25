@@ -9,8 +9,8 @@ export default async function NewMemePage({ searchParams }: { searchParams: Prom
   const { error } = await searchParams;
   return (
     <>
-      <p className="small"><Link href="/admin/memes">← All AI media</Link></p>
-      <PageHeader title="New AI media" sub="Create a media record with its image and generation metadata." />
+      <p className="small"><Link href="/admin/memes">← All memes</Link></p>
+      <PageHeader title="New meme" sub="Create a meme record with its image and generation metadata." />
       <Flash error={error} />
       <div className="panel"><MemeForm action={createMemeAction} submitLabel="Create media" /></div>
     </>

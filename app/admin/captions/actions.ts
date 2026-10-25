@@ -31,16 +31,21 @@ function back(path: string, error: string): never {
 export async function createCaptionAction(form: FormData) {
   const user = await requireSuperadmin();
   const input = readForm(form);
+  const returnTo = String(form.get("return_to") ?? "");
+  const memeReturnTo = /^\/admin\/memes\/[0-9a-f-]{36}$/i.test(returnTo) ? returnTo : "";
   const invalid = validate(input);
-  if (invalid) back("/admin/captions/new", invalid);
+  if (invalid) back(memeReturnTo ? `${memeReturnTo}/captions/new` : "/admin/memes", invalid);
 
   let id: string;
   try {
     id = await insertCaption({ ...input, profileId: user.id });
   } catch (e) {
-    back("/admin/captions/new", (e as Error).message);
+    back(memeReturnTo ? `${memeReturnTo}/captions/new` : "/admin/memes", (e as Error).message);
   }
   revalidatePath("/admin", "layout");
+  if (memeReturnTo) {
+    redirect(`${memeReturnTo}?saved=caption-created`);
+  }
   redirect(`/admin/captions/${id}?saved=created`);
 }
 
@@ -56,10 +61,12 @@ export async function updateCaptionAction(id: string, form: FormData) {
     back(`/admin/captions/${id}`, (e as Error).message);
   }
   revalidatePath("/admin", "layout");
+  const returnTo = String(form.get("return_to") ?? "");
+  if (/^\/admin\/memes\/[0-9a-f-]{36}$/i.test(returnTo)) redirect(`${returnTo}?saved=caption-updated`);
   redirect(`/admin/captions/${id}?saved=1`);
 }
 
-export async function deleteCaptionAction(id: string) {
+export async function deleteCaptionAction(id: string, form: FormData) {
   await requireSuperadmin();
   try {
     await deleteCaption(id);
@@ -67,5 +74,7 @@ export async function deleteCaptionAction(id: string) {
     back(`/admin/captions/${id}`, (e as Error).message);
   }
   revalidatePath("/admin", "layout");
+  const returnTo = String(form.get("return_to") ?? "");
+  if (/^\/admin\/memes\/[0-9a-f-]{36}$/i.test(returnTo)) redirect(`${returnTo}?saved=caption-deleted`);
   redirect(`/admin/captions?saved=deleted`);
 }

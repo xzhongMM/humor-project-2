@@ -17,9 +17,9 @@ export default async function MemesPage({
   return (
     <>
       <PageHeader
-        title="AI media"
-        sub="Manage generated media records and their prompts, model, and source metadata."
-        actions={<Link className="btn primary" href="/admin/memes/new">+ New media</Link>}
+        title="Memes"
+        sub="Manage meme images, generation details, related captions, and ratings."
+        actions={<Link className="btn primary" href="/admin/memes/new">+ New meme</Link>}
       />
       <Flash saved={sp.saved} />
       <form className="toolbar" method="get">

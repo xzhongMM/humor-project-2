@@ -219,6 +219,23 @@ export async function getMeme(id: string) {
   return { raw, meme: mapMeme(aliasRow(raw, COLS.memes)) };
 }
 
+export async function captionsForMeme(memeId: string) {
+  const c = COLS.captions;
+  const { data, error } = await createSupabaseAdmin()
+    .from(TABLES.captions)
+    .select(sel(c))
+    .eq(c.memeId, memeId)
+    .order(c.created, { ascending: false, nullsFirst: false })
+    .range(0, 99);
+  if (error) fail(TABLES.captions, error);
+  const rows = ((data ?? []) as unknown as Row[]).map(mapCaption);
+  const [authors, votes] = await Promise.all([
+    profilesByIds(rows.map((caption) => caption.profileId ?? "")),
+    voteSummariesFor(rows.map((caption) => caption.id)),
+  ]);
+  return { rows, authors, votes };
+}
+
 export type MemeInput = Omit<Meme, "id" | "created">;
 
 export async function insertMeme(input: MemeInput) {

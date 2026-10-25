@@ -26,7 +26,7 @@ export default async function CaptionDetail({
 
   return (
     <>
-      <p className="small"><Link href="/admin/captions">← All captions</Link></p>
+      <p className="small"><Link href={caption.memeId ? `/admin/memes/${caption.memeId}` : "/admin/memes"}>← Back to meme</Link></p>
       <PageHeader title="Edit caption" sub={<>by {caption.profileId ? <Link href={`/admin/users/${caption.profileId}`}>{displayName(author, caption.profileId)}</Link> : "unknown"} · {fmtDateTime(caption.created)}</>} />
       <Flash saved={sp.saved} error={sp.error} />
 
@@ -36,6 +36,7 @@ export default async function CaptionDetail({
             action={updateCaptionAction.bind(null, caption.id)}
             memes={memes}
             initial={{ content: caption.content, memeId: caption.memeId }}
+            returnTo={caption.memeId ? `/admin/memes/${caption.memeId}` : undefined}
             submitLabel="Save changes"
           />
         </div>
@@ -51,6 +52,7 @@ export default async function CaptionDetail({
               This permanently removes the caption and its {fmtInt(votes.total)} vote{votes.total === 1 ? "" : "s"}.
             </p>
             <form action={deleteCaptionAction.bind(null, caption.id)}>
+              {caption.memeId && <input type="hidden" name="return_to" value={`/admin/memes/${caption.memeId}`} />}
               <ConfirmButton className="btn danger" message="Delete this caption and all of its votes? This cannot be undone.">
                 Delete caption
               </ConfirmButton>

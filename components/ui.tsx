@@ -79,15 +79,16 @@ export function RawRow({ row }: { row: Record<string, unknown> }) {
 export function Flash({ saved, error }: { saved?: string; error?: string }) {
   if (error) return <p className="flash error">{error}</p>;
   if (saved) {
-    const message = saved === "created"
-      ? "Caption created."
-      : saved === "deleted"
-        ? "Caption deleted."
-        : saved === "media-created"
-          ? "Media record created."
-          : saved === "media-deleted"
-            ? "Media record deleted."
-            : "Saved.";
+    const messages: Record<string, string> = {
+      created: "Caption created.",
+      deleted: "Caption deleted.",
+      "media-created": "Media record created.",
+      "media-deleted": "Media record deleted.",
+      "caption-created": "Caption created.",
+      "caption-updated": "Caption updated.",
+      "caption-deleted": "Caption deleted.",
+    };
+    const message = messages[saved] ?? "Saved.";
     return <p className="flash ok">{message}</p>;
   }
   return null;

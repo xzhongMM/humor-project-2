@@ -6,8 +6,7 @@ An admin area for the Humor Project database, built with Next.js 15 (App Router)
 |---|---|---|
 | **The Laugh Report** (statistics) | read | `/admin` |
 | Users / profiles | read | `/admin/users`, `/admin/users/[id]` |
-| AI media (`memes`) | **create / read / update / delete** | `/admin/memes`, `/new`, `/[id]` |
-| Captions | create / read / update / delete | `/admin/captions`, `/new`, `/[id]` |
+| Memes and their captions | **create / read / update / delete** | `/admin/memes`, `/new`, `/[id]` |
 | Upvotes / downvotes / ratings | read | `/admin/votes` |
 
 ## Setup
@@ -51,6 +50,8 @@ Either way it's a one-time manual step, and nothing in the deployed app can gran
 If a service-role key has ever been pasted into chat, committed, or otherwise shared, rotate it in Supabase before running the CLI script, then update the local/server environment variable. Never put it in a `NEXT_PUBLIC_` variable.
 
 **Watch out for:** if your RLS policies let users update or insert their own profile row, they must not be able to set `is_superadmin = true`. The migration installs a trigger that blocks that flag from ordinary authenticated users.
+
+Captions are managed from their parent meme. `/admin/captions` redirects to the meme workspace; direct caption detail URLs remain available for links from vote and statistics views.
 
 ## Statistics on the dashboard
 

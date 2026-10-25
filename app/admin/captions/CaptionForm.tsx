@@ -6,20 +6,24 @@ export default function CaptionForm({
   memes,
   initial,
   submitLabel,
+  returnTo,
 }: {
   action: (form: FormData) => Promise<void>;
   memes: Meme[];
   initial?: { content: string; memeId: string | null };
   submitLabel: string;
+  returnTo?: string;
 }) {
   // Make sure the caption's current meme is selectable even if it's not in the recent list.
   const list =
     initial?.memeId && !memes.some((m) => m.id === initial.memeId)
       ? [{ id: initial.memeId, imageUrl: null, created: null }, ...memes]
       : memes;
+  const memeReturnTo = returnTo && /^\/admin\/memes\/[0-9a-f-]{36}$/i.test(returnTo) ? returnTo : undefined;
 
   return (
     <form action={action} className="form">
+      {memeReturnTo && <input type="hidden" name="return_to" value={memeReturnTo} />}
       <label>
         <span>Caption</span>
         <textarea name="content" rows={3} required maxLength={280} defaultValue={initial?.content ?? ""} placeholder="Write something funny…" />
