@@ -83,7 +83,7 @@ export function Flash({ saved, error }: { saved?: string; error?: string }) {
       created: "Caption created.",
       deleted: "Caption deleted.",
       "media-created": "Media record created.",
-      "media-deleted": "Media record deleted.",
+      "media-deleted": "Meme and its captions and votes deleted.",
       "caption-created": "Caption created.",
       "caption-updated": "Caption updated.",
       "caption-deleted": "Caption deleted.",

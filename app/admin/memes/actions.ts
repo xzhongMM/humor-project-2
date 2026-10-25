@@ -82,6 +82,7 @@ export async function updateMemeAction(id: string, form: FormData) {
 export async function deleteMemeAction(id: string) {
   await requireSuperadmin();
   try {
+    // The schema's ON DELETE CASCADE removes caption_votes, captions, then the meme.
     await deleteMeme(id);
   } catch (error) {
     back(`/admin/memes/${id}`, (error as Error).message);

@@ -204,7 +204,29 @@ export async function listMemes(opts: { q?: string; page: number; pageSize?: num
     .order(c.created, { ascending: false, nullsFirst: false })
     .range((page - 1) * pageSize, page * pageSize - 1);
   if (error) fail(TABLES.memes, error);
-  return { rows: ((data ?? []) as unknown as Row[]).map(mapMeme), count: count ?? 0, pageSize };
+  const rows = ((data ?? []) as unknown as Row[]).map(mapMeme);
+  const captions = await captionsForMemes(rows.map((meme) => meme.id));
+  return { rows, captions, count: count ?? 0, pageSize };
+}
+
+async function captionsForMemes(memeIds: string[]): Promise<Map<string, Caption[]>> {
+  const captionsByMeme = new Map<string, Caption[]>();
+  if (memeIds.length === 0) return captionsByMeme;
+  const c = COLS.captions;
+  const { data, error } = await createSupabaseAdmin()
+    .from(TABLES.captions)
+    .select(sel(c))
+    .in(c.memeId, memeIds)
+    .order(c.created, { ascending: false, nullsFirst: false })
+    .range(0, 9_999);
+  if (error) fail(TABLES.captions, error);
+  for (const raw of (data ?? []) as unknown as Row[]) {
+    const caption = mapCaption(raw);
+    const group = captionsByMeme.get(caption.memeId ?? "") ?? [];
+    group.push(caption);
+    captionsByMeme.set(caption.memeId ?? "", group);
+  }
+  return captionsByMeme;
 }
 
 export async function getMeme(id: string) {

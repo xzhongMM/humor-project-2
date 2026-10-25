@@ -3,6 +3,8 @@ import { requireSuperadmin } from "@/lib/auth";
 import { listMemes } from "@/lib/data";
 import { fmtDate, pageNum } from "@/lib/format";
 import { Flash, PageHeader, Pagination, Thumb } from "@/components/ui";
+import ConfirmButton from "../captions/ConfirmButton";
+import { deleteMemeAction } from "./actions";
 
 export default async function MemesPage({
   searchParams,
@@ -12,7 +14,7 @@ export default async function MemesPage({
   await requireSuperadmin();
   const sp = await searchParams;
   const page = pageNum(sp.page);
-  const { rows, count, pageSize } = await listMemes({ q: sp.q, page });
+  const { rows, captions, count, pageSize } = await listMemes({ q: sp.q, page });
 
   return (
     <>
@@ -31,25 +33,39 @@ export default async function MemesPage({
           <thead>
             <tr>
               <th style={{ width: 70 }}>Image</th>
-              <th>Prompt</th>
+              <th>Caption</th>
               <th style={{ width: 120 }}>Vibe</th>
               <th style={{ width: 120 }}>Model</th>
               <th style={{ width: 90 }}>Source</th>
               <th style={{ width: 115 }}>Created</th>
+              <th style={{ width: 100 }}>Actions</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((meme) => (
               <tr key={meme.id}>
                 <td><Thumb url={meme.imageUrl} size={48} /></td>
-                <td><Link href={`/admin/memes/${meme.id}`}>{meme.prompt}</Link></td>
+                <td>
+                  <Link href={`/admin/memes/${meme.id}`}>
+                    {captions.get(meme.id)?.length
+                      ? <span>{captions.get(meme.id)!.slice(0, 2).map((caption) => <span key={caption.id} className="meme-caption">{caption.content}</span>)}{captions.get(meme.id)!.length > 2 && <span className="muted small">+{captions.get(meme.id)!.length - 2} more</span>}</span>
+                      : <span className="muted">No captions yet</span>}
+                  </Link>
+                </td>
                 <td>{meme.vibe}</td>
                 <td className="small">{meme.model}</td>
                 <td><span className="badge">{meme.source}</span></td>
                 <td className="muted small">{fmtDate(meme.created)}</td>
+                <td>
+                  <form action={deleteMemeAction.bind(null, meme.id)}>
+                    <ConfirmButton className="btn danger small" message="Delete this meme and all of its captions and votes? The stored image file will remain.">
+                      Delete
+                    </ConfirmButton>
+                  </form>
+                </td>
               </tr>
             ))}
-            {rows.length === 0 && <tr><td colSpan={6} className="muted center">No media records match.</td></tr>}
+            {rows.length === 0 && <tr><td colSpan={7} className="muted center">No memes match.</td></tr>}
           </tbody>
         </table>
       </div>
