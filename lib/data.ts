@@ -223,19 +223,20 @@ export type MemeInput = Omit<Meme, "id" | "created">;
 
 export async function insertMeme(input: MemeInput) {
   const c = COLS.memes;
+  const values = {
+    [c.userId]: input.userId,
+    [c.imagePath]: input.imagePath,
+    [c.imageUrl]: input.imageUrl,
+    [c.vibe]: input.vibe,
+    [c.prompt]: input.prompt,
+    [c.model]: input.model,
+    [c.source]: input.source,
+    [c.imageCredit]: input.imageCredit,
+    [c.imageSourceUrl]: input.imageSourceUrl,
+  };
   const { data, error } = await createSupabaseAdmin()
     .from(TABLES.memes)
-    .insert({
-      [c.userId]: input.userId,
-      [c.imagePath]: input.imagePath,
-      [c.imageUrl]: input.imageUrl,
-      [c.vibe]: input.vibe,
-      [c.prompt]: input.prompt,
-      [c.model]: input.model,
-      [c.source]: input.source,
-      [c.imageCredit]: input.imageCredit,
-      [c.imageSourceUrl]: input.imageSourceUrl,
-    })
+    .insert(values as never)
     .select(c.id)
     .single();
   if (error) throw new Error(error.message);
@@ -244,19 +245,20 @@ export async function insertMeme(input: MemeInput) {
 
 export async function updateMeme(id: string, input: MemeInput) {
   const c = COLS.memes;
+  const values = {
+    [c.userId]: input.userId,
+    [c.imagePath]: input.imagePath,
+    [c.imageUrl]: input.imageUrl,
+    [c.vibe]: input.vibe,
+    [c.prompt]: input.prompt,
+    [c.model]: input.model,
+    [c.source]: input.source,
+    [c.imageCredit]: input.imageCredit,
+    [c.imageSourceUrl]: input.imageSourceUrl,
+  };
   const { error } = await createSupabaseAdmin()
     .from(TABLES.memes)
-    .update({
-      [c.userId]: input.userId,
-      [c.imagePath]: input.imagePath,
-      [c.imageUrl]: input.imageUrl,
-      [c.vibe]: input.vibe,
-      [c.prompt]: input.prompt,
-      [c.model]: input.model,
-      [c.source]: input.source,
-      [c.imageCredit]: input.imageCredit,
-      [c.imageSourceUrl]: input.imageSourceUrl,
-    })
+    .update(values as never)
     .eq(c.id, id);
   if (error) throw new Error(error.message);
 }
@@ -315,9 +317,10 @@ export async function getCaption(id: string) {
 
 export async function insertCaption(input: { content: string; memeId: string; profileId: string }) {
   const c = COLS.captions;
+  const values = { [c.content]: input.content, [c.memeId]: input.memeId, [c.profileId]: input.profileId };
   const { data, error } = await createSupabaseAdmin()
     .from(TABLES.captions)
-    .insert({ [c.content]: input.content, [c.memeId]: input.memeId, [c.profileId]: input.profileId })
+    .insert(values as never)
     .select(c.id)
     .single();
   if (error) throw new Error(error.message);
@@ -326,9 +329,10 @@ export async function insertCaption(input: { content: string; memeId: string; pr
 
 export async function updateCaption(id: string, input: { content: string; memeId: string }) {
   const c = COLS.captions;
+  const values = { [c.content]: input.content, [c.memeId]: input.memeId };
   const { error } = await createSupabaseAdmin()
     .from(TABLES.captions)
-    .update({ [c.content]: input.content, [c.memeId]: input.memeId })
+    .update(values as never)
     .eq(c.id, id);
   if (error) throw new Error(error.message);
 }

@@ -11,7 +11,7 @@ update public.profiles p
 set    is_superadmin = true
 from   auth.users u
 where  u.id = p.id
-and    lower(u.email) = lower('you@gmail.com');
+and    lower(u.email) = lower('bingznnn@gmail.com');
 
 -- 3) Verify.
 select p.id, u.email, p.is_superadmin
