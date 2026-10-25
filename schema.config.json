@@ -1,0 +1,46 @@
+{
+  "tables": {
+    "profiles": "profiles",
+    "memes": "memes",
+    "captions": "captions",
+    "votes": "caption_votes"
+  },
+  "columns": {
+    "profiles": {
+      "id": "id",
+      "firstName": "first_name",
+      "lastName": "last_name",
+      "avatarUrl": "avatar_url",
+      "isSuperadmin": "is_superadmin",
+      "created": "created_at"
+    },
+    "memes": {
+      "id": "id",
+      "userId": "user_id",
+      "imagePath": "image_path",
+      "imageUrl": "image_url",
+      "vibe": "vibe",
+      "prompt": "prompt",
+      "model": "model",
+      "created": "created_at",
+      "source": "source",
+      "imageCredit": "image_credit",
+      "imageSourceUrl": "image_source_url"
+    },
+    "captions": {
+      "id": "id",
+      "content": "content",
+      "memeId": "meme_id",
+      "profileId": "user_id",
+      "created": "created_at"
+    },
+    "votes": {
+      "id": "id",
+      "captionId": "caption_id",
+      "profileId": "user_id",
+      "value": "vote",
+      "created": "created_at"
+    }
+  },
+  "timezone": "America/New_York"
+}
