@@ -88,8 +88,6 @@ export function Flash({ saved, error }: { saved?: string; error?: string }) {
       "caption-updated": "Caption updated.",
       "caption-deleted": "Caption deleted.",
       "role-updated": "User role updated.",
-      "image-uploaded": "Image uploaded.",
-      "image-deleted": "Image deleted from the database and Storage.",
     };
     const message = messages[saved] ?? "Saved.";
     return <p className="flash ok">{message}</p>;

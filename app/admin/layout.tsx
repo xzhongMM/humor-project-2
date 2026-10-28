@@ -17,18 +17,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <NavLink href="/admin/users">Users</NavLink>
           <NavLink href="/admin/memes">Memes</NavLink>
           <NavLink href="/admin/votes">Votes</NavLink>
-          <NavLink href="/admin/data/prompt-chains">Prompt chains</NavLink>
-          <NavLink href="/admin/data/prompt-chain-steps">Chain steps</NavLink>
-          <NavLink href="/admin/data/prompt-chain-mix">Chain mix</NavLink>
-          <NavLink href="/admin/data/terms">Terms</NavLink>
-          <NavLink href="/admin/data/generation-requests">Generation requests</NavLink>
-          <NavLink href="/admin/data/generation-examples">Generation examples</NavLink>
-          <NavLink href="/admin/data/llm-models">LLM models</NavLink>
-          <NavLink href="/admin/data/llm-providers">LLM providers</NavLink>
-          <NavLink href="/admin/data/llm-responses">LLM responses</NavLink>
-          <NavLink href="/admin/data/allowed-signup-domains">Signup domains</NavLink>
-          <NavLink href="/admin/data/whitelisted-emails">Email allowlist</NavLink>
-          <NavLink href="/admin/data/images">Images</NavLink>
         </nav>
         <div className="whoami">
           <span className="muted small">Signed in as</span>
