@@ -49,10 +49,11 @@ function back(path: string, error: string): never {
 }
 
 export async function createMemeAction(form: FormData) {
-  await requireSuperadmin();
+  const user = await requireSuperadmin();
   const input = readForm(form);
   const invalid = validate(input);
   if (invalid) back("/admin/memes/new", invalid);
+  if (!input.userId) input.userId = user.id;
 
   let id: string;
   try {

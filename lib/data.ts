@@ -279,7 +279,14 @@ export async function insertMeme(input: MemeInput) {
     .select(c.id)
     .single();
   if (error) throw new Error(error.message);
-  return String((data as unknown as Row)[c.id]);
+  const id = String((data as unknown as Row)[c.id]);
+  await recordMemeGeneration({
+    userId: input.userId ?? "",
+    memeId: id,
+    prompt: input.prompt,
+    modelName: input.model,
+  }).catch(() => undefined);
+  return id;
 }
 
 export async function updateMeme(id: string, input: MemeInput) {
@@ -426,5 +433,54 @@ export async function updateProfileSuperadmin(id: string, isSuperadmin: boolean)
     .from(TABLES.profiles)
     .update(values as never)
     .eq(c.id, id);
+  if (error) throw new Error(error.message);
+}
+
+export async function recordMemeGeneration(input: {
+  userId: string | null;
+  memeId: string;
+  prompt: string;
+  modelName: string;
+}) {
+  const db = createSupabaseAdmin();
+  let modelId: string | null = null;
+  let providerId: string | null = null;
+
+  const identifierLookup = await db
+    .from("llm_models")
+    .select("id, provider_id")
+    .eq("identifier", input.modelName)
+    .limit(1)
+    .maybeSingle();
+
+  let model = identifierLookup.data;
+  if (!model && !identifierLookup.error) {
+    const nameLookup = await db
+      .from("llm_models")
+      .select("id, provider_id")
+      .eq("name", input.modelName)
+      .limit(1)
+      .maybeSingle();
+    model = nameLookup.data;
+  }
+
+  if (model) {
+    const resolved = model as unknown as Record<string, unknown>;
+    modelId = typeof resolved.id === "string" ? resolved.id : null;
+    providerId = typeof resolved.provider_id === "string" ? resolved.provider_id : null;
+  }
+
+  const values = {
+    user_id: input.userId || null,
+    meme_id: input.memeId,
+    chain_id: null,
+    provider_id: providerId,
+    model_id: modelId,
+    prompt: input.prompt,
+    status: "succeeded",
+    error_message: null,
+    completed_at: new Date().toISOString(),
+  };
+  const { error } = await db.from("generation_requests").insert(values as never);
   if (error) throw new Error(error.message);
 }
