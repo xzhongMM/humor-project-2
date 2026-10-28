@@ -66,7 +66,12 @@ code { background: var(--surface-2); padding: 1px 5px; border-radius: 5px; font-
   padding: 20px 14px; border-right: 1px solid var(--border); background: var(--surface);
 }
 .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; padding: 0 6px; }
-.sidebar nav { display: flex; flex-direction: column; gap: 2px; }
+.sidebar nav { display: flex; flex-direction: column; gap: 2px; overflow-y: auto; min-height: 0; margin: 0 -4px; padding: 0 4px; }
+.nav-section { display: flex; flex-direction: column; gap: 2px; padding-top: 12px; margin-top: 8px; border-top: 1px solid var(--border); }
+.nav-heading {
+  padding: 0 10px 4px; color: var(--muted); font-size: 11px; font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase;
+}
 .nav-link { padding: 8px 10px; border-radius: 9px; color: var(--muted); font-weight: 500; }
 .nav-link:hover { background: var(--surface-2); color: var(--text); }
 .nav-link.active { background: var(--surface-2); color: var(--text); box-shadow: inset 3px 0 0 var(--accent); }
@@ -76,7 +81,9 @@ code { background: var(--surface-2); padding: 1px 5px; border-radius: 5px; font-
 @media (max-width: 860px) {
   .shell { grid-template-columns: 1fr; }
   .sidebar { position: static; height: auto; flex-direction: row; flex-wrap: wrap; align-items: center; padding: 12px 16px; }
-  .sidebar nav { flex-direction: row; flex-wrap: wrap; }
+  .sidebar nav { flex-direction: column; width: 100%; order: 3; overflow: visible; }
+  .nav-section { flex-direction: row; flex-wrap: wrap; align-items: center; padding-top: 8px; }
+  .nav-heading { width: 100%; }
   .whoami { margin: 0 0 0 auto; flex-direction: row; align-items: center; gap: 8px; }
   .whoami .muted { display: none; }
   .content { padding: 20px 16px 48px; }
