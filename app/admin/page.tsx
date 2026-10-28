@@ -3,7 +3,9 @@ import { requireSuperadmin } from "@/lib/auth";
 import { loadEverything } from "@/lib/data";
 import { computeStats, DOW_LABELS, type CaptionScore } from "@/lib/stats";
 import { displayName, fmtDate, fmtInt, fmtPct } from "@/lib/format";
-import { DailyBars, Gauge, HBars, LengthChart, Punchcard, SplitBar } from "@/components/charts";
+import { Gauge, HBars, LengthChart, Punchcard, SplitBar } from "@/components/charts";
+import DailyBars from "@/components/daily-bars";
+import LiveRefresh from "@/components/live-refresh";
 import { PageHeader, Stat, Thumb } from "@/components/ui";
 import type { Meme } from "@/lib/types";
 
@@ -38,6 +40,7 @@ export default async function Overview() {
 
   return (
     <>
+      <LiveRefresh intervalMs={15_000} />
       <PageHeader
         title="The Laugh Report"
         sub={`What ${fmtInt(t.users)} people think is funny, based on ${fmtInt(t.votes)} votes across ${fmtInt(t.captions)} AI captions.`}

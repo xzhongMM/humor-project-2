@@ -3,12 +3,20 @@ import { notFound } from "next/navigation";
 import { requireSuperadmin } from "@/lib/auth";
 import { activityForProfile, captionsByIds, getProfile } from "@/lib/data";
 import { displayName, fmtDateTime, fmtInt, fmtPct } from "@/lib/format";
-import { PageHeader, RawRow, Stat } from "@/components/ui";
+import { Flash, PageHeader, RawRow, Stat } from "@/components/ui";
+import { updateUserRoleAction } from "../actions";
 import { SplitBar } from "@/components/charts";
 
-export default async function UserDetail({ params }: { params: Promise<{ id: string }> }) {
-  await requireSuperadmin();
+export default async function UserDetail({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ saved?: string; error?: string }>;
+}) {
+  const currentUser = await requireSuperadmin();
   const { id } = await params;
+  const sp = await searchParams;
   const found = await getProfile(id);
   if (!found) notFound();
   const { profile, raw } = found;
@@ -22,6 +30,7 @@ export default async function UserDetail({ params }: { params: Promise<{ id: str
     <>
       <p className="small"><Link href="/admin/users">← All users</Link></p>
       <PageHeader title={displayName(profile)} sub={profile.id} actions={profile.isSuperadmin ? <span className="badge">superadmin</span> : null} />
+      <Flash saved={sp.saved} error={sp.error} />
 
       <section className="stat-strip">
         <Stat label="Captions written" value={fmtInt(act.captionCount)} />
@@ -60,6 +69,21 @@ export default async function UserDetail({ params }: { params: Promise<{ id: str
       <section className="panel">
         <h2>Raw profile row</h2>
         <RawRow row={raw} />
+      </section>
+
+      <section className="panel">
+        <h2>Role</h2>
+        {id === currentUser.id ? (
+          <p className="small muted">You cannot change your own admin role from this panel.</p>
+        ) : (
+          <form action={updateUserRoleAction.bind(null, id)} className="row gap-sm">
+            <select name="role" defaultValue={profile.isSuperadmin ? "superadmin" : "user"} aria-label="User role">
+              <option value="user">User</option>
+              <option value="superadmin">Superadmin</option>
+            </select>
+            <button className="btn primary small">Update role</button>
+          </form>
+        )}
       </section>
     </>
   );

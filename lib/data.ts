@@ -418,3 +418,13 @@ export async function listVotes(opts: { filter: VoteFilter; page: number; pageSi
     downCount: downRes.count ?? 0,
   };
 }
+
+export async function updateProfileSuperadmin(id: string, isSuperadmin: boolean) {
+  const c = COLS.profiles;
+  const values = { [c.isSuperadmin]: isSuperadmin };
+  const { error } = await createSupabaseAdmin()
+    .from(TABLES.profiles)
+    .update(values as never)
+    .eq(c.id, id);
+  if (error) throw new Error(error.message);
+}

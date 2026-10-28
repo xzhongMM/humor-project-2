@@ -2,14 +2,15 @@ import Link from "next/link";
 import { requireSuperadmin } from "@/lib/auth";
 import { listProfiles } from "@/lib/data";
 import { displayName, fmtDate, pageNum } from "@/lib/format";
-import { PageHeader, Pagination, Thumb } from "@/components/ui";
+import { PageHeader, Pagination, Thumb, Flash } from "@/components/ui";
+import { updateUserRoleAction } from "./actions";
 
 export default async function UsersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; page?: string; admins?: string }>;
+  searchParams: Promise<{ q?: string; page?: string; admins?: string; saved?: string; error?: string }>;
 }) {
-  await requireSuperadmin();
+  const currentUser = await requireSuperadmin();
   const sp = await searchParams;
   const page = pageNum(sp.page);
   const admins = sp.admins === "1";
@@ -17,7 +18,8 @@ export default async function UsersPage({
 
   return (
     <>
-      <PageHeader title="Users" sub="Profiles are read-only here." />
+      <PageHeader title="Users" sub="Read profiles and update user roles." />
+      <Flash saved={sp.saved} error={sp.error} />
       <form className="toolbar" method="get">
         <input name="q" defaultValue={sp.q} placeholder="Search profile name…" />
         <label className="check small">
@@ -45,7 +47,20 @@ export default async function UsersPage({
                   </div>
                 </td>
                 <td className="muted small mono">{p.id}</td>
-                <td>{p.isSuperadmin ? <span className="badge">superadmin</span> : <span className="muted small">user</span>}</td>
+                <td>
+                  {p.id === currentUser.id ? (
+                    <span className="badge">superadmin (you)</span>
+                  ) : (
+                    <form action={updateUserRoleAction.bind(null, p.id)} className="row gap-sm">
+                      <input type="hidden" name="return_to" value="/admin/users" />
+                      <select name="role" defaultValue={p.isSuperadmin ? "superadmin" : "user"} aria-label={`Role for ${displayName(p)}`}>
+                        <option value="user">User</option>
+                        <option value="superadmin">Superadmin</option>
+                      </select>
+                      <button className="btn small">Update</button>
+                    </form>
+                  )}
+                </td>
                 <td className="muted small">{fmtDate(p.created)}</td>
               </tr>
             ))}
